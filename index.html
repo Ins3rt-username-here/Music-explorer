@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Space+Grotesk:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============ HEADER / SEARCH ============ -->
+  <header class="site-header">
+    <div class="header-inner">
+      <!-- Clicking the wordmark always returns to the homepage -->
+      <button type="button" id="home-link" class="wordmark">Music&nbsp;Explorer</button>
+
+      <form id="search-form" class="search-form" role="search">
+        <label for="search-input" class="sr-only">Search for an artist, song, or album</label>
+        <input
+          type="search"
+          id="search-input"
+          class="search-input"
+          placeholder="Search an artist, song, or album…"
+          autocomplete="off"
+        />
+        <button type="submit" class="search-button">
+          <span>Search</span>
+        </button>
+      </form>
+    </div>
+  </header>
+
+  <!-- ============ MAIN CONTENT ============ -->
+  <main id="main-content">
+
+    <!-- Status region: loading / empty / error messages render here -->
+    <p id="status-message" class="status-message" role="status" aria-live="polite"></p>
+
+    <!-- Whichever view is active (home / search results / artist profile) -->
+    <!-- is built into this container by script.js.                       -->
+    <div id="view-root"></div>
+  </main>
+
+  <!-- ============ EXPANDED PLAYER OVERLAY ============ -->
+  <div id="player-overlay" class="player-overlay" hidden>
+    <div
+      id="player-panel"
+      class="player-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="player-track-name"
+    >
+      <button id="player-close" class="player-close" aria-label="Close player">✕</button>
+
+      <div class="player-art-wrap">
+        <img id="player-art" class="player-art" src="" alt="" />
+      </div>
+
+      <div class="player-info">
+        <p id="player-genre" class="player-genre"></p>
+        <h2 id="player-track-name" class="player-track-name"></h2>
+        <p id="player-artist-album" class="player-artist-album"></p>
+
+        <div id="player-tags" class="player-tags"></div>
+
+        <!-- Shown if a track has no preview clip available. -->
+        <p id="preview-note" class="preview-note" hidden>
+          This track can't be played right now.
+        </p>
+
+        <div class="player-progress">
+          <span id="player-time-current" class="player-time">0:00</span>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <span id="player-time-total" class="player-time">0:00</span>
+        </div>
+
+        <!-- Play is the centered, primary control beneath the progress bar; -->
+        <!-- previous/next flank it. No favorite button — that feature isn't -->
+        <!-- wired to anything yet, so it was removed rather than left dead. -->
+        <div class="player-controls">
+          <button class="control-btn" id="prev-btn" aria-label="Previous track">⏮</button>
+          <button class="control-btn control-btn--main" id="play-btn" aria-label="Play">▶</button>
+          <button class="control-btn" id="next-btn" aria-label="Next track">⏭</button>
+        </div>
+
+        <div class="player-volume">
+          <span aria-hidden="true">🔊</span>
+          <input type="range" id="volume-slider" min="0" max="100" value="70" aria-label="Volume" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Plays whichever track is open in the player (iTunes' 30-second preview clip). -->
+  <audio id="audio-player" preload="none"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>

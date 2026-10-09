@@ -1,0 +1,846 @@
+/* ==========================================================
+   MUSIC EXPLORER — STYLES
+   Dark, atmospheric music-discovery aesthetic.
+   Layout: mobile-first, scaling up at 768px and 1280px.
+   ========================================================== */
+
+:root {
+  /* ---- Color tokens ---- */
+  --bg: #0b0b0d;
+  --surface: #17161a;
+  --surface-2: #1e1d22;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text: #f3f1f5;
+  --text-muted: #97929e;
+  --text-faint: #5f5b66;
+  --accent: #380482;        /* deep violet — buttons, selected states */
+  --accent-soft: rgba(56, 4, 130, 0.38);
+  /* Lighter derived tone for text/outlines placed directly on dark
+     surfaces, where the raw --accent (very dark) wouldn't read clearly */
+  --accent-bright: color-mix(in srgb, var(--accent) 55%, white 45%);
+  --danger: #e5766b;
+
+  /* Fallback glow color when artwork color extraction isn't available */
+  --glow-fallback: 147, 51, 234;
+
+  /* ---- Type ---- */
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Space Grotesk", system-ui, sans-serif;
+
+  /* ---- Layout ---- */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --gutter: 20px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  background-image:
+    radial-gradient(circle at 15% 0%, rgba(227, 181, 103, 0.06), transparent 40%),
+    radial-gradient(circle at 85% 20%, rgba(255, 255, 255, 0.03), transparent 35%);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Visible, deliberate focus ring for keyboard users */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+.track-card:focus-visible {
+  outline: 2px solid var(--accent-bright);
+  outline-offset: 3px;
+}
+
+/* ==========================================================
+   HEADER + SEARCH
+   ========================================================== */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(11, 11, 13, 0.86);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 18px var(--gutter) 14px;
+}
+
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.wordmark {
+  /* This is a <button> (so it can navigate home) styled to read as the
+     page's heading-level wordmark rather than a button. */
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  margin: 0;
+  letter-spacing: -0.01em;
+  background: none;
+  border: none;
+  color: var(--text);
+  padding: 0;
+  cursor: pointer;
+}
+
+.wordmark:hover {
+  color: var(--accent-bright);
+}
+
+.search-form {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.search-input::placeholder {
+  color: var(--text-faint);
+}
+
+.search-input:hover {
+  border-color: var(--border-strong);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent-bright);
+  background: var(--surface-2);
+}
+
+.search-button {
+  background: var(--accent);
+  color: var(--text);
+  border: none;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0 20px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.15s ease;
+}
+
+.search-button:hover {
+  background: color-mix(in srgb, var(--accent) 80%, white 20%);
+}
+
+.search-button:active {
+  transform: scale(0.97);
+}
+
+/* ---- Genre filter chips ---- */
+
+.genre-filter {
+  max-width: 1280px;
+  margin: 14px auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.genre-chip {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.genre-chip:hover {
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.genre-chip[aria-pressed="true"] {
+  background: var(--accent-soft);
+  border-color: var(--accent-bright);
+  color: var(--accent-bright);
+}
+
+/* ==========================================================
+   MAIN / STATUS MESSAGES
+   ========================================================== */
+
+#main-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px var(--gutter) 60px;
+}
+
+.status-message {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  padding: 40px 20px;
+  margin: 0;
+}
+
+.status-message:empty {
+  display: none;
+  padding: 0;
+}
+
+.status-message.is-error {
+  color: var(--danger);
+}
+
+.status-message .retry-btn {
+  display: inline-block;
+  margin-top: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  font-family: var(--font-body);
+  padding: 8px 18px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.status-message .retry-btn:hover {
+  border-color: var(--accent-bright);
+}
+
+/* ==========================================================
+   TRACK GRID + CARDS
+   ========================================================== */
+
+/* The carousel wraps two arrow buttons around the scrollable card row,
+   so the whole thing works the same way with a mouse, touch swipe, or
+   keyboard, at any viewport width. */
+.track-carousel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.carousel-arrow {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.carousel-arrow:hover {
+  color: var(--text);
+  border-color: var(--accent-bright);
+}
+
+.carousel-arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.track-grid {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  padding: 2px 2px 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.track-grid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.track-grid::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+
+.track-card {
+  --glow: var(--glow-fallback);
+  position: relative;
+  flex: 0 0 auto;
+  width: 148px;
+  scroll-snap-align: start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 10px;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+@media (min-width: 480px) {
+  .track-card {
+    width: 168px;
+  }
+}
+
+@media (min-width: 768px) {
+  .track-card {
+    width: 184px;
+    padding: 12px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .track-card {
+    width: 200px;
+  }
+}
+
+.track-card:hover,
+.track-card:focus-visible {
+  transform: translateY(-4px) scale(1.015);
+  border-color: rgba(var(--glow), 0.45);
+  box-shadow:
+    0 18px 40px -18px rgba(var(--glow), 0.45),
+    0 0 0 1px rgba(var(--glow), 0.08);
+}
+
+.track-art-wrap {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.track-art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Small "clickable" affordance icon, revealed on hover/focus */
+.play-affordance {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(11, 11, 13, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  font-size: 0.8rem;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.track-card:hover .play-affordance,
+.track-card:focus-visible .play-affordance {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.track-body {
+  padding: 10px 2px 2px;
+}
+
+.track-name {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 500;
+  margin: 0 0 3px;
+  line-height: 1.28;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.track-artist-album {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.track-artist-album .album {
+  color: var(--text-faint);
+}
+
+.track-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tag {
+  font-size: 0.62rem;
+  letter-spacing: 0.01em;
+  color: var(--text-muted);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* ==========================================================
+   HOME / SEARCH VIEW LAYOUT — content sections, artist &
+   album cards (both reuse the .track-card markup/classes),
+   and the artist profile header.
+   ========================================================== */
+
+#view-root {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+}
+
+.content-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 500;
+  margin: 0;
+  padding: 0 2px;
+}
+
+/* Artist cards reuse all of .track-card's sizing/hover/glow behavior; */
+/* this just rounds the artwork into an avatar and centers the text.  */
+.artist-card .track-art-wrap {
+  border-radius: 50%;
+}
+
+/* Fallback avatar for an artist with no photo available: a colored */
+/* circle (hashed from their name, so it's consistent) with initials. */
+.monogram-art {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.monogram-text {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.artist-profile-art .monogram-text {
+  font-size: 2.6rem;
+}
+
+.artist-card .track-body {
+  text-align: center;
+}
+
+.artist-card .track-name {
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+}
+
+/* Genre filter chips, scoped to whichever section renders them
+   (currently just the Tracks section of search results) rather than
+   pinned globally — the header doesn't have its own genre filter here. */
+.genre-filter {
+  max-width: none;
+  margin: 0;
+}
+
+/* ---- Artist profile header ---- */
+
+.artist-profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 10px 4px 6px;
+}
+
+.artist-profile-art {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--surface-2);
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.7);
+}
+
+.artist-profile-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.artist-profile-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-weight: 500;
+  margin: 0;
+}
+
+.artist-profile-meta {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.play-all-btn {
+  margin-top: 6px;
+  background: var(--accent);
+  color: var(--text);
+  border: none;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 10px 22px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.12s ease;
+}
+
+.play-all-btn:hover {
+  background: color-mix(in srgb, var(--accent) 80%, white 20%);
+}
+
+.play-all-btn:active {
+  transform: scale(0.97);
+}
+
+.play-all-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (min-width: 768px) {
+  .artist-profile-header {
+    flex-direction: row;
+    text-align: left;
+    align-items: center;
+    gap: 24px;
+  }
+}
+
+/* ==========================================================
+   EXPANDED PLAYER OVERLAY
+   ========================================================== */
+
+.player-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(6, 6, 7, 0.78);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+.player-overlay[hidden] {
+  display: none;
+}
+
+.player-panel {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  /* dvh = the *visible* viewport height (accounts for mobile browser bars) */
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  /* Everything below is sized off the viewport height so the whole
+     player fits on screen with no scrolling. This just hides the
+     scrollbar chrome as a last-resort safety net on very short windows. */
+  scrollbar-width: none;
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px 22px;
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.6);
+}
+
+.player-panel::-webkit-scrollbar {
+  display: none;
+}
+
+.player-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.85rem;
+  cursor: pointer;
+  /* The accent "halo" ring, like a Walkman device's chrome trim */
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-bright) 55%, transparent);
+}
+
+.player-close:hover {
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 3px var(--accent-bright);
+}
+
+.player-art-wrap {
+  /* Scales with the window height so the whole player fits on screen
+     without scrolling, same principle as before, just for a plain image
+     now rather than a player with its own minimum size requirement. */
+  width: max(160px, min(100%, 300px, 36dvh));
+  margin: 34px auto 14px;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--surface-2);
+  box-shadow: 0 20px 50px -18px rgba(0, 0, 0, 0.7);
+}
+
+.player-art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.player-info {
+  text-align: center;
+}
+
+.player-genre {
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--accent-bright);
+  margin: 0 0 6px;
+}
+
+.player-track-name {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 0 0 6px;
+  line-height: 1.3;
+  /* Long YouTube titles are capped at two lines so they can't push the
+     controls off-screen. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.player-artist-album {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 22px;
+}
+
+.preview-note {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0 0 10px;
+}
+
+/* These are filled in only when there's something to show; collapse
+   them otherwise so they don't waste vertical space. */
+.player-genre:empty,
+.player-tags:empty {
+  display: none;
+}
+
+/* ---- Progress bar ---- */
+
+.player-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.player-time {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  min-width: 32px;
+}
+
+.progress-track {
+  flex: 1;
+  height: 4px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent-bright);
+  border-radius: 999px;
+  transition: width 0.1s linear;
+}
+
+/* ---- Transport controls ---- */
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.control-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.control-btn:hover {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.control-btn--main {
+  width: 60px;
+  height: 60px;
+  font-size: 1.15rem;
+  background: var(--accent);
+  color: var(--text);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-bright) 35%, transparent);
+}
+
+.control-btn--main:hover {
+  background: color-mix(in srgb, var(--accent) 80%, white 20%);
+  color: var(--text);
+}
+
+.control-btn--main:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.player-volume {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-faint);
+  font-size: 0.85rem;
+}
+
+.player-volume input[type="range"] {
+  flex: 1;
+  accent-color: var(--accent-bright);
+}
+
+/* ==========================================================
+   RESPONSIVE TWEAKS
+   ========================================================== */
+
+@media (min-width: 768px) {
+  .header-inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .search-form {
+    max-width: 420px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}
