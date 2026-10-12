@@ -408,8 +408,8 @@ input:focus-visible,
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  line-clamp: 2;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
@@ -501,8 +501,8 @@ input:focus-visible,
 }
 
 .artist-card .track-name {
-  -webkit-line-clamp: 1;
   line-clamp: 1;
+  -webkit-line-clamp: 1;
 }
 
 /* Genre filter chips, scoped to whichever section renders them
@@ -691,9 +691,9 @@ input:focus-visible,
   line-height: 1.3;
   /* Long YouTube titles are capped at two lines so they can't push the
      controls off-screen. */
+    line-clamp: 2;
   display: -webkit-box;
   -webkit-line-clamp: 2;
-  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
